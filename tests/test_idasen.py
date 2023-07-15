@@ -19,6 +19,9 @@ def event_loop() -> Generator[AbstractEventLoop, None, None]:
     yield loop
     loop.close()
 
+# Switch this to a real mac address if you want to do live testing.
+# This will wear out your motors faster than normal usage.
+desk_mac: str = "AA:AA:AA:AA:AA:AA"
 
 class MockBleakClient:
     """Mocks the bleak client for unit testing."""
@@ -57,15 +60,14 @@ class MockBleakClient:
         high_byte = (norm >> 8) & 0xFF
         return bytearray([low_byte, high_byte, 0x00, 0x00])
 
-
-# Switch this to a real mac address if you want to do live testing.
-# This will wear out your motors faster than normal usage.
-desk_mac: str = "AA:AA:AA:AA:AA:AA"
+    @property
+    def address(self) -> str:
+        return desk_mac
 
 
 @pytest.fixture(scope="session")
 async def desk(event_loop: AbstractEventLoop) -> AsyncGenerator[IdasenDesk, None]:
-    desk = IdasenDesk(mac=desk_mac)
+    desk = IdasenDesk(address_or_ble_device=desk_mac)
     if desk_mac == "AA:AA:AA:AA:AA:AA":
         desk._client = MockBleakClient()  # type: ignore
 
@@ -134,7 +136,7 @@ async def test_fail_to_connect(caplog, monkeypatch):
 
     caplog.set_level("WARNING")
 
-    desk = IdasenDesk(mac=desk_mac, exit_on_fail=True)
+    desk = IdasenDesk(address_or_ble_device=desk_mac, exit_on_fail=True)
     client = MockBleakClient()
     client.__aenter__ = raise_exception
     desk._client = client
