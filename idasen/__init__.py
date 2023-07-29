@@ -90,6 +90,11 @@ class IdasenDesk:
     ):
         self._exit_on_fail = exit_on_fail
         self._client = BleakClient(address_or_ble_device)
+        self._mac = (
+            address_or_ble_device.address
+            if isinstance(address_or_ble_device, BLEDevice)
+            else address_or_ble_device
+        )
         self._logger = _DeskLoggingAdapter(
             logger=logging.getLogger(__name__), extra={"mac": self.mac}
         )
@@ -169,7 +174,7 @@ class IdasenDesk:
     @property
     def mac(self) -> str:
         """Desk MAC address."""
-        return self._client.address
+        return self._mac
 
     async def move_up(self):
         """
