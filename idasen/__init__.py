@@ -100,17 +100,17 @@ class IdasenDesk:
         )
 
     async def __aenter__(self):
-        await self._connect()
+        await self.connect()
         return self
 
     async def __aexit__(self, *args, **kwargs) -> Optional[bool]:
-        return await self._client.__aexit__(*args, **kwargs)
+        await self.disconnect()
 
-    async def _connect(self):
+    async def connect(self):
         i = 0
         while True:
             try:
-                await self._client.__aenter__()
+                await self._client.connect()
                 return
             except Exception:
                 if i >= self.RETRY_COUNT:
@@ -123,6 +123,9 @@ class IdasenDesk:
                     f"Failed to connect, retrying ({i}/{self.RETRY_COUNT})..."
                 )
                 time.sleep(0.3 * i)
+
+    async def disconnect(self):
+        await self._client.disconnect()
 
     async def monitor(self, callback: Callable[[int], Awaitable[None]]):
         output_service_uuid = "99fa0020-338a-1024-8a49-009c0215f78a"
