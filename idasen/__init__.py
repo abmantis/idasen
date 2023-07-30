@@ -124,7 +124,7 @@ class IdasenDesk:
                 self._logger.warning(
                     f"Failed to connect, retrying ({i}/{self.RETRY_COUNT})..."
                 )
-                time.sleep(0.3 * i)
+                await asyncio.sleep(0.3 * i)
 
     async def disconnect(self):
         await self._client.disconnect()
