@@ -266,7 +266,7 @@ class IdasenDesk:
                     return
                 if not self._moving:
                     return
-                self._logger.debug("MOVING!")
+
                 if abs(difference) < 0.005:  # tolerance of 0.005 meters
                     self._logger.info(f"reached target of {target:.3f}")
                     await self._stop()
