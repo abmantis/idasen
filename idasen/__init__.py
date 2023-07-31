@@ -86,10 +86,16 @@ class IdasenDesk:
     RETRY_COUNT: int = 3
 
     def __init__(
-        self, address_or_ble_device: Union[BLEDevice, str], exit_on_fail: bool = False
+        self,
+        address_or_ble_device: Union[BLEDevice, str],
+        exit_on_fail: bool = False,
+        disconnected_callback: Optional[Callable[[BleakClient], None]] = None,
     ):
         self._exit_on_fail = exit_on_fail
-        self._client = BleakClient(address_or_ble_device)
+        self._client = BleakClient(
+            address_or_ble_device=address_or_ble_device,
+            disconnected_callback=disconnected_callback,
+        )
         self._mac = (
             address_or_ble_device.address
             if isinstance(address_or_ble_device, BLEDevice)
