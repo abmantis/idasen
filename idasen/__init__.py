@@ -114,6 +114,9 @@ class IdasenDesk:
     async def __aexit__(self, *args, **kwargs) -> Optional[bool]:
         await self.disconnect()
 
+    async def pair(self):
+        await self._client.pair()
+
     async def connect(self):
         i = 0
         while True:
