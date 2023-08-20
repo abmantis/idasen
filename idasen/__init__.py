@@ -279,6 +279,7 @@ class IdasenDesk:
                 if abs(difference) < 0.005:  # tolerance of 0.005 meters
                     self._logger.info(f"reached target of {target:.3f}")
                     await self._stop()
+                    self._moving = False
                     return
                 elif difference > 0:
                     await self.move_up()
@@ -287,6 +288,7 @@ class IdasenDesk:
                 previous_height = height
 
         self._move_task = asyncio.create_task(do_move())
+        await self._move_task
 
     async def stop(self):
         """Stop desk movement."""
